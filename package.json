@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node index.js",
-    "dev_refactored": "node index_refactor.js"
+    "dev_refactored": "node index_refactor.js",
+    "dev_refactored_2": "node index_refactor_async_await.js"
   },
   "keywords": [],
   "author": "",

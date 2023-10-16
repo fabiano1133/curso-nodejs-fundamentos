@@ -6,6 +6,8 @@
 03 - Obter o endereço do usuário pelo ID
 */
 
+const util = require("util");
+
 const getUser = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -22,21 +24,19 @@ const getUserPhoneNumber = (user_id) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       return resolve({
-        phoneNumber: "9999-99999",
+        phoneNumber: "99999-9999",
         ddd: "92",
       });
     }, 3000);
   });
 };
 
-const getUserAdress = (user_id) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      return resolve({
-        address: `Iscar, 789, Green Park, Texas`,
-      });
-    }, 4000);
-  });
+const getUserAdress = (user_id, cb) => {
+  setTimeout(() => {
+    return cb(null, {
+      address: `Iscar, 789, Green Park, Texas`,
+    });
+  }, 4000);
 };
 
 const user = getUser();
@@ -54,32 +54,23 @@ user
     });
   })
   .then((result) => {
-    console.log("RESULT", result);
+    const address = getAddresAsync(result.user.id);
+    return address.then((result_address) => {
+      return {
+        user: result.user,
+        phoneNumber: result.phoneNumber,
+        address: result_address,
+      };
+    });
+  })
+  .then((result) => {
+    console.log(`
+      Hello, How are you going? My name is ${result.user.name}, my address is ${result.address.address} and my phone number is
+      (${result.phoneNumber.ddd})${result.phoneNumber.phoneNumber}
+    `);
   })
   .catch((error) => {
     console.error(error);
   });
 
-// getUser((err, user) => {
-//   if (err) {
-//     console.error(`An Error has occurred: ${err}`);
-//     return;
-//   }
-//   getUserPhoneNumber(user.id, (err1, phoneNumber) => {
-//     if (err) {
-//       console.error(`An Error has occurred: ${err1}`);
-//       return;
-//     }
-//     getUserAdress(user.id, (err2, userAddress) => {
-//       if (err2) {
-//         console.error(`An Error has occurred: ${err2}`);
-//         return;
-//       }
-//       console.log(`
-//         Name: ${user.name}
-//         Address: ${userAddress.address}
-//         Phone_Number: (${phoneNumber.ddd})${phoneNumber.phoneNumber}
-//       `);
-//     });
-//   });
-// });
+const getAddresAsync = util.promisify(getUserAdress);
